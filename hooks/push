@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -ex
 
-docker_versions=($(cat docker-versions))
+docker_engine_versions=($(cat docker-engine-versions))
 
-for docker_version in "${docker_versions[@]}"
+for docker_engine_version in "${docker_engine_versions[@]}"
 do
-  echo "pushing image for docker version ${docker_version}"
-  docker push "${DOCKER_REPO}:${docker_version}"
+  echo "pushing image for docker version ${docker_engine_version}"
+  docker push "${DOCKER_REPO}:${docker_engine_version}"
 done

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -ex
+
+docker_engine_version="${1:?docker engine version major.minor}"
+docker_compose_version=($(cat docker-compose-version))
+
+DOCKER_REPO="snapkitchen/concourse-docker-compose"
+
+echo "building image for docker engine version ${docker_engine_version}"
+docker build \
+  --build-arg DOCKER_ENGINE_VERSION="${docker_engine_version}" \
+  --build-arg DOCKER_COMPOSE_VERSION="${docker_compose_version}" \
+  --tag "${DOCKER_REPO}:${docker_engine_version}" \
+  .

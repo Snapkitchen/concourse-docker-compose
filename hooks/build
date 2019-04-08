@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 set -ex
 
-docker_versions=($(cat docker-versions))
+docker_engine_versions=($(cat docker-engine-versions))
 docker_compose_version=($(cat docker-compose-version))
 
-for docker_version in "${docker_versions[@]}"
+for docker_engine_version in "${docker_engine_versions[@]}"
 do
-  echo "building image for docker version ${docker_version}"
+  echo "building image for docker engine version ${docker_engine_version}"
   docker build \
-    --build-arg DIND_IMAGE="docker:${docker_version}-dind" \
-    --build-arg DOCKER_ENGINE_VERSION="${docker_version}" \
+    --build-arg DOCKER_ENGINE_VERSION="${docker_engine_version}" \
     --build-arg DOCKER_COMPOSE_VERSION="${docker_compose_version}" \
-    --tag "${DOCKER_REPO}:${docker_version}" \
+    --tag "${DOCKER_REPO}:${docker_engine_version}" \
     .
 done
