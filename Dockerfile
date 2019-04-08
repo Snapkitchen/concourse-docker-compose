@@ -10,7 +10,7 @@ LABEL docker.engine.version="${DOCKER_ENGINE_VERSION}" \
 
 ENV GLIBC 2.28-r0
 
-RUN apk update && apk add --no-cache openssl ca-certificates curl libgcc && \
+RUN apk update && apk add --no-cache bash openssl ca-certificates curl libgcc && \
     curl -fsSL -o /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
     curl -fsSL -o glibc-$GLIBC.apk https://github.com/sgerrand/alpine-pkg-glibc/releases/download/$GLIBC/glibc-$GLIBC.apk && \
     apk add --no-cache glibc-$GLIBC.apk && \
