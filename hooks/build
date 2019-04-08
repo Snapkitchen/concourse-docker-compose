@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -ex
+
+docker_versions=($(cat docker-versions))
+
+for docker_version in "${docker_versions[@]}"
+do
+  echo "building image for docker version ${docker_version}"
+  docker build \
+    --build-arg DIND_IMAGE="docker:${docker_version}-dind" \
+    --tag "${DOCKER_REPO}:${docker_version}" \
+    .
+done

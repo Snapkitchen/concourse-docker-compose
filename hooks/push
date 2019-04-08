@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -ex
+
+docker_versions=($(cat docker-versions))
+
+for docker_version in "${docker_versions[@]}"
+do
+  echo "pushing image for docker version ${docker_version}"
+  docker push "${DOCKER_REPO}:${docker_version}"
+done
