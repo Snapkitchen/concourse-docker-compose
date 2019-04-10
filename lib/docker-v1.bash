@@ -198,6 +198,6 @@ docker_pull() {
     pull_attempt=$(expr "$pull_attempt" + 1)
   done
 
-  printf "\n${RED}Failed to pull image %s.${NC}" "$1"
+  printf "\n${RED}Failed to pull image %s.${NC}\n\n" "$1"
   return 1
 }
