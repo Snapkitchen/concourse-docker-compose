@@ -25,3 +25,5 @@ RUN apk update && apk add --no-cache bash openssl ca-certificates curl libgcc &&
     chown 1000:1000 /usr/local/bin/docker-compose && \
     apk del curl && \
     docker-compose --version
+
+COPY lib/docker-v1.bash /usr/local/lib/concourse-docker-compose/
