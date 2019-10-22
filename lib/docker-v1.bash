@@ -201,3 +201,69 @@ docker_pull() {
   printf "\n${RED}Failed to pull image %s.${NC}\n\n" "$1"
   return 1
 }
+
+generate_cache_key() {
+  local md5sum_output=
+  md5sum_output="$(echo -n "${1}" | md5sum)"
+  echo "${md5sum_output}" | cut -f1 -d' '
+}
+
+save_image() {
+  local image_name="${1?image name}"
+  local image_tag="${2?image tag}"
+  local image_dir="${3?image dir}"
+
+  local saved_image_id_file="${image_dir}/image-id"
+  local saved_image_id=
+  if [[ -e "${saved_image_id_file}" ]]
+  then
+    saved_image_id=$(cat "${saved_image_id_file}")
+  fi
+
+  local current_image_id=
+  current_image_id="$(image_from_tag "${image_name}" "${image_tag}")"
+
+  local image="${image_name}:${image_tag}"
+  local saved_image_file="${image_dir}/image"
+  if [[ ! -e "${saved_image_file}" || "${saved_image_id}" != "${current_image_id}" ]]
+  then
+    if [[ ! -e "${image_dir}" ]]
+    then
+      echo "creating image dir at ${image_dir}"
+      mkdir -p "${image_dir}"
+    fi
+    echo "saving ${image} to ${saved_image_file}"
+    docker save --output "${saved_image_file}" "${image}"
+    echo "${current_image_id}" > "${saved_image_id_file}"
+  else
+    echo "${image} at ${saved_image_file} is up-to-date"
+  fi
+}
+
+load_image() {
+  local image_name="${1?image name}"
+  local image_tag="${2?image tag}"
+  local image_dir="${3?image dir}"
+
+  local saved_image_file="${image_dir}/image"
+  local saved_image_id_file="${image_dir}/image-id"
+
+  if [[ -e "${saved_image_file}" ]]
+  then
+    echo "loading ${saved_image_file} ..."
+    docker load --input "${saved_image_file}"
+    if [[ -e "${saved_image_id_file}" ]]
+    then
+      local saved_image_id=
+      saved_image_id="$(cat "${saved_image_id_file}")"
+      local image="${image_name}:${image_tag}"
+      echo "tagging ${saved_image_id} as ${image}"
+      docker tag "${saved_image_id}" "${image}"
+    else
+      echo >&2 "warning: image-id not found at ${saved_image_id_file}"
+    fi
+    echo "done loading ${saved_image_file}"
+  else
+    echo >&2 "warning: image not found at ${saved_image_file}"
+  fi
+}

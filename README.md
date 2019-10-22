@@ -40,7 +40,7 @@ to use the helper script, run `/bin/bash` as your entrypoint and then `source` t
         stop_docker
 ```
 
-#### v1 api
+#### v1 lib api
 
 `start_docker`
 
@@ -52,6 +52,36 @@ to use the helper script, run `/bin/bash` as your entrypoint and then `source` t
 `stop_docker`
 
 - stops the docker engine
+
+`save_image NAME TAG DIR`
+
+- checks if image was already saved under `{DIR}/image` with a `{DIR}/image-id`
+
+- if current `image-id` matches `{DIR}/image-id`, and `{DIR}/image` exists, does not save (no-op)
+
+- if mismatch, or `{DIR}/image` is missing, saves to `{DIR}/image` and updates `{DIR}/image-id`
+
+  example:
+
+  ```bash
+  save_image "foo/bar" "latest" "image-output"
+  ```
+
+`load_image NAME TAG DIR`
+
+- checks if `{DIR}/image` exists
+
+  - if found, performs a `docker load` on `{DIR}/image`
+
+- checks if `{DIR}/image-id` exists
+
+  - if found, tags `{DIR}/image-id` as `{NAME}:{TAG}`
+
+  example:
+
+  ```bash
+  load_image "foo/bar" "build" "image-cache"
+  ```
 
 ## build scripts
 
