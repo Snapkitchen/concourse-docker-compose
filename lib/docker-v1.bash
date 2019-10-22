@@ -225,7 +225,7 @@ save_image() {
 
   local image="${image_name}:${image_tag}"
   local saved_image_file="${image_dir}/image"
-  if [[ ! -e "${saved_image_file}" || "${saved_image_id}" != "${current_image_id}" ]]
+  if [[ ! -e "${saved_image_file}" ]] || [[ "${saved_image_id}" != "${current_image_id}" ]]
   then
     if [[ ! -e "${image_dir}" ]]
     then
