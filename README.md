@@ -53,34 +53,46 @@ to use the helper script, run `/bin/bash` as your entrypoint and then `source` t
 
 - stops the docker engine
 
-`save_image NAME TAG DIR`
+`save_image NAME TAG DIR [FILENAME (default: image)] [ID_FILENAME (default: image-id)]`
 
-- checks if image was already saved under `{DIR}/image` with a `{DIR}/image-id`
+- checks if image was already saved under `{DIR}/{FILENAME}` with a `{DIR}/{ID_FILENAME}`
 
-- if current `image-id` matches `{DIR}/image-id`, and `{DIR}/image` exists, does not save (no-op)
+- if current `image-id` matches `{DIR}/{ID_FILENAME}`, and `{DIR}/{FILENAME}` exists, does not save (no-op)
 
-- if mismatch, or `{DIR}/image` is missing, saves to `{DIR}/image` and updates `{DIR}/image-id`
+- if mismatch, or `{DIR}/{FILENAME}` is missing, saves to `{DIR}/{FILENAME}` and updates `{DIR}/{ID_FILENAME}`
 
-  example:
+  example for `docker-image`:
 
   ```bash
   save_image "foo/bar" "latest" "image-output"
   ```
 
-`load_image NAME TAG DIR`
+  example for `registry-image`:
 
-- checks if `{DIR}/image` exists
+  ```bash
+  save_image "foo/bar" "latest" "image-output" "image.tar" "digest"
+  ```
 
-  - if found, performs a `docker load` on `{DIR}/image`
+`load_image NAME TAG DIR [FILENAME (default: image)] [ID_FILENAME (default: image-id)]`
 
-- checks if `{DIR}/image-id` exists
+- checks if `{DIR}/{FILENAME}` exists
 
-  - if found, tags `{DIR}/image-id` as `{NAME}:{TAG}`
+  - if found, performs a `docker load` on `{DIR}/{FILENAME}`
 
-  example:
+- checks if `{DIR}/{ID_FILENAME}` exists
+
+  - if found, tags `{DIR}/{ID_FILENAME}` as `{NAME}:{TAG}`
+
+  example for `docker-image`:
 
   ```bash
   load_image "foo/bar" "build" "image-cache"
+  ```
+
+  example for `registry-image`:
+
+  ```bash
+  load_image "foo/bar" "build" "image-cache" "image.tar" "digest"
   ```
 
 ## build scripts

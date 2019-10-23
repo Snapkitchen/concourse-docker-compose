@@ -212,8 +212,10 @@ save_image() {
   local image_name="${1?image name}"
   local image_tag="${2?image tag}"
   local image_dir="${3?image dir}"
+  local image_filename="${4:-image}"
+  local image_id_filename="${5:-image-id}"
 
-  local saved_image_id_file="${image_dir}/image-id"
+  local saved_image_id_file="${image_dir}/${image_id_filename}"
   local saved_image_id=
   if [[ -e "${saved_image_id_file}" ]]
   then
@@ -224,12 +226,12 @@ save_image() {
   current_image_id="$(image_from_tag "${image_name}" "${image_tag}")"
 
   local image="${image_name}:${image_tag}"
-  local saved_image_file="${image_dir}/image"
+  local saved_image_file="${image_dir}/${image_filename}"
   if [[ ! -e "${saved_image_file}" ]] || [[ "${saved_image_id}" != "${current_image_id}" ]]
   then
     if [[ ! -e "${image_dir}" ]]
     then
-      echo "creating image dir at ${image_dir}"
+      echo "creating dir at ${image_dir}"
       mkdir -p "${image_dir}"
     fi
     echo "saving ${image} to ${saved_image_file}"
@@ -244,9 +246,11 @@ load_image() {
   local image_name="${1?image name}"
   local image_tag="${2?image tag}"
   local image_dir="${3?image dir}"
+  local image_filename="${4:-image}"
+  local image_id_filename="${5:-image-id}"
 
-  local saved_image_file="${image_dir}/image"
-  local saved_image_id_file="${image_dir}/image-id"
+  local saved_image_file="${image_dir}/${image_filename}"
+  local saved_image_id_file="${image_dir}/${image_id_filename}"
 
   if [[ -e "${saved_image_file}" ]]
   then
@@ -260,10 +264,10 @@ load_image() {
       echo "tagging ${saved_image_id} as ${image}"
       docker tag "${saved_image_id}" "${image}"
     else
-      echo >&2 "warning: image-id not found at ${saved_image_id_file}"
+      echo >&2 "warning: ${image_id_filename} not found at ${saved_image_id_file}"
     fi
     echo "done loading ${saved_image_file}"
   else
-    echo >&2 "warning: image not found at ${saved_image_file}"
+    echo >&2 "warning: ${image_filename} not found at ${saved_image_file}"
   fi
 }
